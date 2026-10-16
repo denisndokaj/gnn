@@ -71,7 +71,7 @@ export function Sidebar({ preventivi, idCorrente, onSeleziona, onNuovo }: Props)
         )}
         <ul className="flex flex-col gap-1">
           {elenco.map((p) => {
-            const { totale } = calcolaTotali(p);
+            const { totale, inSospeso } = calcolaTotali(p);
             const attivo = p.id === idCorrente;
             return (
               <li key={p.id}>
@@ -90,7 +90,9 @@ export function Sidebar({ preventivi, idCorrente, onSeleziona, onNuovo }: Props)
                   <p className="truncate text-sm text-slate-600">{p.cliente.nome || 'Cliente da definire'}</p>
                   <div className="mt-1 flex items-center justify-between text-xs text-slate-400">
                     <span>{formattaData(p.data)}</span>
-                    <span className="font-medium text-slate-600">{formattaValuta(totale)}</span>
+                    <span className={`font-medium ${inSospeso ? 'italic text-amber-600' : 'text-slate-600'}`}>
+                      {inSospeso ? 'Da definire' : formattaValuta(totale)}
+                    </span>
                   </div>
                 </button>
               </li>

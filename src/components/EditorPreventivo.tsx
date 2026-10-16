@@ -221,8 +221,14 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
             </div>
           </div>
           <hr className="my-1 border-slate-200" />
+          {totali.inSospeso && (
+            <p className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs leading-snug text-amber-800">
+              {totali.righeSospese === 1 ? '1 voce è' : `${totali.righeSospese} voci sono`} senza quantità: il
+              totale resta in sospeso finché non viene rilevata la misura.
+            </p>
+          )}
           <div className="flex items-center justify-between text-sm text-slate-600">
-            <span>Imponibile lordo</span>
+            <span>Imponibile lordo{totali.inSospeso && ' (voci quantificate)'}</span>
             <span>{formattaValuta(totali.imponibileLordo)}</span>
           </div>
           {preventivo.scontoPercentuale > 0 && (
@@ -235,14 +241,20 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
             <span>Imponibile netto</span>
             <span>{formattaValuta(totali.imponibileNetto)}</span>
           </div>
-          <div className="flex items-center justify-between text-sm text-slate-600">
-            <span>IVA ({preventivo.ivaPercentuale}%){!preventivo.applicaIva && ' — esclusa'}</span>
-            <span>{formattaValuta(totali.valoreIva)}</span>
-          </div>
+          {preventivo.applicaIva && (
+            <div className="flex items-center justify-between text-sm text-slate-600">
+              <span>IVA ({preventivo.ivaPercentuale}%)</span>
+              <span>{formattaValuta(totali.valoreIva)}</span>
+            </div>
+          )}
           <hr className="my-1 border-slate-200" />
           <div className="flex items-center justify-between text-base font-semibold text-slate-900">
             <span>Totale ({preventivo.applicaIva ? 'IVA inclusa' : 'IVA esclusa'})</span>
-            <span>{formattaValuta(totali.totale)}</span>
+            {totali.inSospeso ? (
+              <span className="text-amber-700">Da definire</span>
+            ) : (
+              <span>{formattaValuta(totali.totale)}</span>
+            )}
           </div>
         </div>
       </section>

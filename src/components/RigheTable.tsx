@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function RigheTable({ righe, onChange }: Props) {
-  function aggiorna(id: string, campo: keyof Riga, valore: string | number) {
+  function aggiorna(id: string, campo: keyof Riga, valore: string | number | null) {
     onChange(righe.map((r) => (r.id === id ? { ...r, [campo]: valore } : r)));
   }
 
@@ -42,8 +42,8 @@ export function RigheTable({ righe, onChange }: Props) {
           <tr className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
             <th className="w-10 px-2 py-2"></th>
             <th className="px-3 py-2">Descrizione lavorazione</th>
-            <th className="w-24 px-3 py-2">U.M.</th>
-            <th className="w-24 px-3 py-2">Quantità</th>
+            <th className="w-20 px-3 py-2">U.M.</th>
+            <th className="w-28 px-3 py-2">Quantità</th>
             <th className="w-32 px-3 py-2">Prezzo unit.</th>
             <th className="w-32 px-3 py-2 text-right">Totale</th>
             <th className="w-10 px-2 py-2"></th>
@@ -99,9 +99,12 @@ export function RigheTable({ righe, onChange }: Props) {
                 <input
                   type="number"
                   step="any"
-                  value={riga.quantita}
-                  onChange={(e) => aggiorna(riga.id, 'quantita', Number(e.target.value))}
-                  className="w-full rounded border border-transparent bg-transparent px-1 py-1 text-right outline-none focus:border-blue-400 focus:bg-white"
+                  value={riga.quantita ?? ''}
+                  onChange={(e) =>
+                    aggiorna(riga.id, 'quantita', e.target.value === '' ? null : Number(e.target.value))
+                  }
+                  placeholder="da definire"
+                  className="w-full rounded border border-transparent bg-transparent px-1 py-1 text-right text-[13px] outline-none placeholder:text-[11px] placeholder:text-slate-300 placeholder:italic focus:border-blue-400 focus:bg-white"
                 />
               </td>
               <td className="px-3 py-1.5">
@@ -114,7 +117,11 @@ export function RigheTable({ righe, onChange }: Props) {
                 />
               </td>
               <td className="px-3 py-1.5 text-right font-medium text-slate-700">
-                {formattaValuta(totaleRiga(riga))}
+                {totaleRiga(riga) === null ? (
+                  <span className="text-sm italic text-amber-600">da definire</span>
+                ) : (
+                  formattaValuta(totaleRiga(riga)!)
+                )}
               </td>
               <td className="px-2 py-1.5 text-center">
                 <button

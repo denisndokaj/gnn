@@ -10,7 +10,9 @@ interface Props {
 
 export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
   const totali = calcolaTotali(preventivo);
-  const righeValide = preventivo.righe.filter((r) => r.descrizione.trim() || r.quantita || r.prezzoUnitario);
+  const righeValide = preventivo.righe.filter(
+    (r) => r.descrizione.trim() || r.quantita !== null || r.prezzoUnitario,
+  );
 
   return (
     <div
@@ -44,24 +46,26 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
 
       <section className="grid grid-cols-2 gap-6">
         <div>
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Spett.le</p>
-          <p className="font-semibold text-slate-900">{preventivo.cliente.nome || '—'}</p>
-          {preventivo.cliente.indirizzo && <p>{preventivo.cliente.indirizzo}</p>}
-          {preventivo.cliente.telefono && <p>Tel. {preventivo.cliente.telefono}</p>}
-          {preventivo.cliente.email && <p>{preventivo.cliente.email}</p>}
-          {preventivo.cliente.codiceFiscalePiva && <p>C.F./P.IVA: {preventivo.cliente.codiceFiscalePiva}</p>}
+          <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">Spett.le</p>
+          <div className="space-y-0.5 text-slate-700">
+            <p className="text-[15px] font-semibold text-slate-900">{preventivo.cliente.nome || '—'}</p>
+            {preventivo.cliente.indirizzo && <p>{preventivo.cliente.indirizzo}</p>}
+            {preventivo.cliente.telefono && <p>Tel. {preventivo.cliente.telefono}</p>}
+            {preventivo.cliente.email && <p>{preventivo.cliente.email}</p>}
+            {preventivo.cliente.codiceFiscalePiva && <p>C.F./P.IVA: {preventivo.cliente.codiceFiscalePiva}</p>}
+          </div>
         </div>
         <div>
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Oggetto</p>
-          <p className="font-semibold text-slate-900">{preventivo.oggetto || '—'}</p>
-          {preventivo.luogoLavori && (
-            <>
-              <p className="mb-1 mt-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Luogo lavori
-              </p>
-              <p>{preventivo.luogoLavori}</p>
-            </>
-          )}
+          <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">Oggetto</p>
+          <div className="space-y-0.5 text-slate-700">
+            <p className="text-[15px] font-semibold text-slate-900">{preventivo.oggetto || '—'}</p>
+            {preventivo.luogoLavori && (
+              <>
+                <p className="pt-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">Luogo lavori</p>
+                <p>{preventivo.luogoLavori}</p>
+              </>
+            )}
+          </div>
         </div>
       </section>
 
@@ -87,18 +91,26 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
             <tr key={riga.id} className="border-b border-slate-100 align-top">
               <td className="whitespace-pre-wrap py-2 pr-2">{riga.descrizione}</td>
               <td className="py-2 pr-2">{riga.unitaMisura}</td>
-              <td className="py-2 pr-2 text-right">{riga.quantita}</td>
+              <td className="py-2 pr-2 text-right">
+                {riga.quantita === null ? <span className="italic text-amber-600">da rilevare</span> : riga.quantita}
+              </td>
               <td className="py-2 pr-2 text-right">{formattaValuta(riga.prezzoUnitario)}</td>
-              <td className="py-2 text-right font-medium">{formattaValuta(totaleRiga(riga))}</td>
+              <td className="py-2 text-right font-medium">
+                {totaleRiga(riga) === null ? (
+                  <span className="italic text-amber-600">da definire</span>
+                ) : (
+                  formattaValuta(totaleRiga(riga)!)
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <section className="flex justify-end">
-        <div className="w-64 text-sm">
+      <section className="flex flex-col items-end gap-2">
+        <div className="w-72 text-sm">
           <div className="flex justify-between py-1">
-            <span className="text-slate-500">Imponibile lordo</span>
+            <span className="text-slate-500">Imponibile lordo{totali.inSospeso && ' (voci quantificate)'}</span>
             <span>{formattaValuta(totali.imponibileLordo)}</span>
           </div>
           {preventivo.scontoPercentuale > 0 && (
@@ -111,17 +123,23 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
             <span className="text-slate-500">Imponibile netto</span>
             <span>{formattaValuta(totali.imponibileNetto)}</span>
           </div>
-          <div className="flex justify-between py-1">
-            <span className="text-slate-500">
-              IVA ({preventivo.ivaPercentuale}%){!preventivo.applicaIva && ' — esclusa'}
-            </span>
-            <span>{formattaValuta(totali.valoreIva)}</span>
-          </div>
+          {preventivo.applicaIva && (
+            <div className="flex justify-between py-1">
+              <span className="text-slate-500">IVA ({preventivo.ivaPercentuale}%)</span>
+              <span>{formattaValuta(totali.valoreIva)}</span>
+            </div>
+          )}
           <div className="mt-1 flex justify-between border-t-2 border-blue-900 py-2 text-base font-bold text-blue-900">
             <span>TOTALE ({preventivo.applicaIva ? 'IVA inclusa' : 'IVA esclusa'})</span>
-            <span>{formattaValuta(totali.totale)}</span>
+            {totali.inSospeso ? <span className="text-amber-700">Da definire</span> : <span>{formattaValuta(totali.totale)}</span>}
           </div>
         </div>
+        {totali.inSospeso && (
+          <p className="w-72 text-right text-[11px] italic leading-snug text-amber-700">
+            Prezzo indicato a unità di misura: il totale sarà definito a seguito del rilievo delle quantità
+            effettive.
+          </p>
+        )}
       </section>
 
       {(preventivo.condizioniPagamento || preventivo.note) && (

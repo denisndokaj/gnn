@@ -2,7 +2,7 @@ export interface Riga {
   id: string;
   descrizione: string;
   unitaMisura: string;
-  quantita: number;
+  quantita: number | null;
   prezzoUnitario: number;
 }
 
