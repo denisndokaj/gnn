@@ -21,7 +21,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
     >
       <header className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-blue-900 pb-4">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="G.N.N. s.n.c." className="h-16 w-auto" />
+          <img src={logo} alt="G.N.N. s.n.c." className="h-24 w-auto" />
           <div>
             <p className="text-base font-bold text-slate-900">{AZIENDA.ragioneSociale}</p>
             <p className="text-xs text-slate-500">{AZIENDA.settore}</p>
@@ -40,7 +40,9 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
           <h1 className="text-xl font-bold tracking-wide text-blue-900">PREVENTIVO</h1>
           <p className="text-sm text-slate-600">N° {preventivo.numero}</p>
           <p className="text-sm text-slate-600">Data: {formattaData(preventivo.data)}</p>
-          <p className="text-sm text-slate-600">Valido {preventivo.validitaGiorni} giorni</p>
+          {preventivo.mostraValidita && (
+            <p className="text-sm text-slate-600">Valido {preventivo.validitaGiorni} giorni</p>
+          )}
         </div>
       </header>
 
@@ -165,9 +167,9 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
         <div className="text-xs text-slate-500">
           <p className="mb-0.5">Contatti:</p>
           <p className="flex flex-wrap gap-y-0.5">
-            {AZIENDA.referenti.map((r, indice) => (
+            {AZIENDA.referenti.map((r) => (
               <span key={r.nome} className="whitespace-nowrap">
-                {indice > 0 && <span className="mx-1.5 text-slate-300">•</span>}
+                <span className="mr-1.5 text-slate-300">•</span>
                 {r.nome} {r.telefono}
               </span>
             ))}

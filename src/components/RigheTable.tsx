@@ -1,3 +1,4 @@
+import type { FocusEvent } from 'react';
 import type { Riga } from '../types';
 import { formattaValuta, totaleRiga } from '../lib/calc';
 import { nuovoId } from '../lib/id';
@@ -6,6 +7,10 @@ function autoRidimensiona(elemento: HTMLTextAreaElement | null) {
   if (!elemento) return;
   elemento.style.height = 'auto';
   elemento.style.height = `${elemento.scrollHeight}px`;
+}
+
+function selezionaTutto(e: FocusEvent<HTMLInputElement>) {
+  e.target.select();
 }
 
 interface Props {
@@ -103,6 +108,7 @@ export function RigheTable({ righe, onChange }: Props) {
                   onChange={(e) =>
                     aggiorna(riga.id, 'quantita', e.target.value === '' ? null : Number(e.target.value))
                   }
+                  onFocus={selezionaTutto}
                   placeholder="da definire"
                   className="w-full rounded border border-transparent bg-transparent px-1 py-1 text-right text-[13px] outline-none placeholder:text-[11px] placeholder:text-slate-300 placeholder:italic focus:border-blue-400 focus:bg-white"
                 />
@@ -113,6 +119,7 @@ export function RigheTable({ righe, onChange }: Props) {
                   step="any"
                   value={riga.prezzoUnitario}
                   onChange={(e) => aggiorna(riga.id, 'prezzoUnitario', Number(e.target.value))}
+                  onFocus={selezionaTutto}
                   className="w-full rounded border border-transparent bg-transparent px-1 py-1 text-right outline-none focus:border-blue-400 focus:bg-white"
                 />
               </td>

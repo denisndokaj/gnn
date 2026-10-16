@@ -43,7 +43,7 @@ export function Sidebar({ preventivi, idCorrente, onSeleziona, onNuovo }: Props)
   return (
     <aside className="no-print flex w-full shrink-0 flex-col border-b border-slate-200 bg-white md:h-screen md:w-80 md:border-b-0 md:border-r">
       <div className="flex items-center gap-3 border-b border-slate-200 p-4">
-        <img src={logo} alt="G.N.N. s.n.c." className="h-10 w-auto" />
+        <img src={logo} alt="G.N.N. s.n.c." className="h-14 w-auto" />
         <div>
           <p className="text-sm font-semibold text-slate-900">G.N.N. s.n.c.</p>
           <p className="text-xs text-slate-500">Gestione Preventivi</p>

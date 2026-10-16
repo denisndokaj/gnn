@@ -21,6 +21,7 @@ export interface Preventivo {
   numero: string;
   data: string;
   validitaGiorni: number;
+  mostraValidita: boolean;
   cliente: Cliente;
   oggetto: string;
   luogoLavori: string;

@@ -26,7 +26,7 @@ function scrivi<T>(chiave: string, valore: T): void {
 
 export function caricaPreventivi(): Preventivo[] {
   const preventivi = leggi<Preventivo[]>(CHIAVE_PREVENTIVI, []);
-  return preventivi.map((p) => ({ ...p, applicaIva: p.applicaIva ?? true }));
+  return preventivi.map((p) => ({ ...p, applicaIva: p.applicaIva ?? true, mostraValidita: p.mostraValidita ?? true }));
 }
 
 export function salvaPreventivi(preventivi: Preventivo[]): void {
@@ -58,6 +58,7 @@ export function nuovoPreventivoVuoto(): Preventivo {
     numero: prossimoNumero(),
     data: new Date().toISOString().slice(0, 10),
     validitaGiorni: 30,
+    mostraValidita: true,
     cliente: {
       nome: '',
       indirizzo: '',

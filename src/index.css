@@ -9,32 +9,52 @@ body {
   background: #f1f2f4;
 }
 
-/* Area stampabile: visibile solo a schermo per l'anteprima, isolata in stampa */
+/* Area stampabile: in stampa resta visibile solo #area-stampa, in normale
+   flusso di pagina (niente trucchi di visibility/position che spezzano la
+   paginazione su più fogli). Gli altri pannelli vengono rimossi dal layout
+   tramite .no-print, così #area-stampa può crescere ed estendersi su più
+   pagine senza essere ritagliato da contenitori con scroll. */
 @media print {
   @page {
     size: A4;
     margin: 14mm 12mm;
   }
 
-  body * {
-    visibility: hidden;
-  }
-
-  #area-stampa,
-  #area-stampa * {
-    visibility: visible;
-  }
-
-  #area-stampa {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    margin: 0;
-    box-shadow: none !important;
-    border: none !important;
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
   }
 
   .no-print {
     display: none !important;
+  }
+
+  #area-stampa {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Evita interruzioni di pagina brutte quando il preventivo supera un foglio */
+  #area-stampa header,
+  #area-stampa section {
+    break-inside: avoid;
+  }
+
+  #area-stampa table {
+    break-inside: auto;
+  }
+
+  #area-stampa thead {
+    display: table-header-group;
+  }
+
+  #area-stampa tbody tr {
+    break-inside: avoid;
   }
 }

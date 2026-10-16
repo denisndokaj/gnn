@@ -76,8 +76,8 @@ function App() {
         )}
 
         {preventivoCorrente && (
-          <div className="flex flex-1 flex-col lg:flex-row">
-            <div className={`flex-1 lg:block ${vistaMobile === 'modifica' ? 'block' : 'hidden'}`}>
+          <div className="flex flex-1 flex-col lg:flex-row print:block">
+            <div className={`no-print flex-1 lg:block ${vistaMobile === 'modifica' ? 'block' : 'hidden'}`}>
               <div className="no-print hidden items-center justify-end px-6 pt-4 md:flex">
                 <button
                   onClick={() => setMostraImpostazioni(true)}
@@ -96,7 +96,8 @@ function App() {
             </div>
 
             <div
-              className={`flex-1 overflow-y-auto border-t border-slate-200 bg-slate-200/60 p-4 lg:block lg:border-l lg:border-t-0 lg:p-6 ${
+              id="pannello-anteprima"
+              className={`flex-1 overflow-y-auto border-t border-slate-200 bg-slate-200/60 p-4 lg:block lg:border-l lg:border-t-0 lg:p-6 print:block print:h-auto print:overflow-visible print:border-0 print:p-0 ${
                 vistaMobile === 'anteprima' ? 'block' : 'hidden'
               }`}
             >

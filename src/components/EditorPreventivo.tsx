@@ -127,16 +127,26 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
                 className={`${campoClasse()} mt-1`}
               />
             </label>
-            <label className="w-32 text-xs font-medium text-slate-500">
+            <label className={`w-32 text-xs font-medium text-slate-500 ${!preventivo.mostraValidita && 'opacity-40'}`}>
               Validità (gg)
               <input
                 type="number"
                 value={preventivo.validitaGiorni}
                 onChange={(e) => set('validitaGiorni', Number(e.target.value))}
-                className={`${campoClasse()} mt-1`}
+                disabled={!preventivo.mostraValidita}
+                className={`${campoClasse()} mt-1 disabled:cursor-not-allowed`}
               />
             </label>
           </div>
+          <label className="flex items-center gap-1.5 text-xs text-slate-500">
+            <input
+              type="checkbox"
+              checked={preventivo.mostraValidita}
+              onChange={(e) => set('mostraValidita', e.target.checked)}
+              className="rounded border-slate-300 text-blue-800 focus:ring-blue-700"
+            />
+            Mostra la validità dell'offerta nel preventivo
+          </label>
           <input
             value={preventivo.oggetto}
             onChange={(e) => set('oggetto', e.target.value)}
