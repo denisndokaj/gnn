@@ -17,11 +17,11 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
   return (
     <div
       id="area-stampa"
-      className="mx-auto flex w-full max-w-[210mm] flex-col gap-6 bg-white p-8 text-[13px] text-slate-800 shadow-sm md:p-10"
+      className="@container mx-auto flex w-full max-w-[210mm] flex-col gap-6 bg-white p-8 text-[13px] text-slate-800 shadow-sm md:p-10"
     >
-      <header className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-blue-900 pb-4">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="G.N.N. s.n.c." className="h-24 w-auto" />
+      <header className="flex flex-col gap-4 border-b-2 border-blue-900 pb-4 @sm:flex-row @sm:flex-wrap @sm:items-start @sm:justify-between">
+        <div className="flex flex-col items-start gap-2 @sm:flex-row @sm:items-center @sm:gap-3">
+          <img src={logo} alt="G.N.N. s.n.c." className="h-16 w-auto @sm:h-24 print:h-36" />
           <div>
             <p className="text-base font-bold text-slate-900">{AZIENDA.ragioneSociale}</p>
             <p className="text-xs text-slate-500">{AZIENDA.settore}</p>
@@ -36,7 +36,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
             )}
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-left @sm:text-right">
           <h1 className="text-xl font-bold tracking-wide text-blue-900">PREVENTIVO</h1>
           <p className="text-sm text-slate-600">N° {preventivo.numero}</p>
           <p className="text-sm text-slate-600">Data: {formattaData(preventivo.data)}</p>
@@ -46,7 +46,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
         </div>
       </header>
 
-      <section className="grid grid-cols-2 gap-6">
+      <section className="grid grid-cols-1 gap-6 @sm:grid-cols-2">
         <div>
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">Spett.le</p>
           <div className="space-y-0.5 text-slate-700">
@@ -110,7 +110,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
       </table>
 
       <section className="flex flex-col items-end gap-2">
-        <div className="w-72 text-sm">
+        <div className="w-full text-sm @sm:w-72">
           <div className="flex justify-between py-1">
             <span className="text-slate-500">Imponibile lordo{totali.inSospeso && ' (voci quantificate)'}</span>
             <span>{formattaValuta(totali.imponibileLordo)}</span>
@@ -137,7 +137,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
           </div>
         </div>
         {totali.inSospeso && (
-          <p className="w-72 text-right text-[11px] italic leading-snug text-amber-700">
+          <p className="w-full text-right text-[11px] italic leading-snug text-amber-700 @sm:w-72">
             Prezzo indicato a unità di misura: il totale sarà definito a seguito del rilievo delle quantità
             effettive.
           </p>
@@ -163,7 +163,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
         </section>
       )}
 
-      <section className="mt-4 flex items-end justify-between gap-6 border-t border-slate-200 pt-6">
+      <section className="mt-4 flex flex-col items-start gap-6 border-t border-slate-200 pt-6 @sm:flex-row @sm:items-end @sm:justify-between">
         <div className="text-xs text-slate-500">
           <p className="mb-0.5">Contatti:</p>
           <p className="flex flex-wrap gap-y-0.5">
@@ -177,7 +177,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
           {datiAzienda.iban && <p>IBAN: {datiAzienda.iban}</p>}
           {datiAzienda.rea && <p>REA: {datiAzienda.rea}</p>}
         </div>
-        <div className="w-56 text-center text-xs text-slate-500">
+        <div className="w-full text-center text-xs text-slate-500 @sm:w-56">
           <p className="mb-8">Per accettazione (firma)</p>
           <div className="border-t border-slate-400" />
         </div>
