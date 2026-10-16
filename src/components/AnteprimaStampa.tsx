@@ -163,7 +163,15 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
 
       <section className="mt-4 flex items-end justify-between gap-6 border-t border-slate-200 pt-6">
         <div className="text-xs text-slate-500">
-          <p>Contatti: {AZIENDA.referenti.map((r) => `${r.nome} ${r.telefono}`).join(' • ')}</p>
+          <p className="mb-0.5">Contatti:</p>
+          <p className="flex flex-wrap gap-y-0.5">
+            {AZIENDA.referenti.map((r, indice) => (
+              <span key={r.nome} className="whitespace-nowrap">
+                {indice > 0 && <span className="mx-1.5 text-slate-300">•</span>}
+                {r.nome} {r.telefono}
+              </span>
+            ))}
+          </p>
           {datiAzienda.iban && <p>IBAN: {datiAzienda.iban}</p>}
           {datiAzienda.rea && <p>REA: {datiAzienda.rea}</p>}
         </div>
