@@ -24,7 +24,10 @@ export function RigheTable({ righe, onChange }: Props) {
   }
 
   function aggiungi() {
-    onChange([...righe, { id: nuovoId(), descrizione: '', unitaMisura: '', quantita: 1, prezzoUnitario: 0 }]);
+    onChange([
+      ...righe,
+      { id: nuovoId(), descrizione: '', unitaMisura: '', quantita: 1, prezzoUnitario: 0, totaleManuale: null },
+    ]);
   }
 
   function rimuovi(id: string) {
@@ -124,8 +127,18 @@ export function RigheTable({ righe, onChange }: Props) {
                 />
               </td>
               <td className="px-3 py-1.5 text-right font-medium text-slate-700">
-                {totaleRiga(riga) === null ? (
-                  <span className="text-sm italic text-amber-600">da definire</span>
+                {riga.quantita === null ? (
+                  <input
+                    type="number"
+                    step="any"
+                    value={riga.totaleManuale ?? ''}
+                    onChange={(e) =>
+                      aggiorna(riga.id, 'totaleManuale', e.target.value === '' ? null : Number(e.target.value))
+                    }
+                    onFocus={selezionaTutto}
+                    placeholder="da definire"
+                    className="w-full rounded border border-transparent bg-transparent px-1 py-1 text-right font-medium text-slate-700 outline-none placeholder:text-[11px] placeholder:font-normal placeholder:text-slate-300 placeholder:italic focus:border-blue-400 focus:bg-white"
+                  />
                 ) : (
                   formattaValuta(totaleRiga(riga)!)
                 )}

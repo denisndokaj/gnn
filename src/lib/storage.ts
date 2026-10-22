@@ -26,7 +26,13 @@ function scrivi<T>(chiave: string, valore: T): void {
 
 export function caricaPreventivi(): Preventivo[] {
   const preventivi = leggi<Preventivo[]>(CHIAVE_PREVENTIVI, []);
-  return preventivi.map((p) => ({ ...p, applicaIva: p.applicaIva ?? true, mostraValidita: p.mostraValidita ?? true }));
+  return preventivi.map((p) => ({
+    ...p,
+    titolo: p.titolo ?? 'PREVENTIVO',
+    applicaIva: p.applicaIva ?? true,
+    mostraValidita: p.mostraValidita ?? true,
+    righe: p.righe.map((r) => ({ ...r, totaleManuale: r.totaleManuale ?? null })),
+  }));
 }
 
 export function salvaPreventivi(preventivi: Preventivo[]): void {
@@ -55,6 +61,7 @@ export function nuovoPreventivoVuoto(): Preventivo {
   const ora = new Date().toISOString();
   return {
     id: nuovoId(),
+    titolo: 'PREVENTIVO',
     numero: prossimoNumero(),
     data: new Date().toISOString().slice(0, 10),
     validitaGiorni: 30,
@@ -75,6 +82,7 @@ export function nuovoPreventivoVuoto(): Preventivo {
         unitaMisura: '',
         quantita: 1,
         prezzoUnitario: 0,
+        totaleManuale: null,
       },
     ],
     scontoPercentuale: 0,

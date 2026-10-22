@@ -1,12 +1,12 @@
 import type { Preventivo, Riga } from '../types';
 
 export function rigaHaContenuto(riga: Riga): boolean {
-  return riga.descrizione.trim() !== '' || riga.prezzoUnitario > 0;
+  return riga.descrizione.trim() !== '' || riga.prezzoUnitario > 0 || riga.totaleManuale !== null;
 }
 
 export function totaleRiga(riga: Riga): number | null {
-  if (riga.quantita === null) return null;
-  return riga.quantita * riga.prezzoUnitario;
+  if (riga.quantita !== null) return riga.quantita * riga.prezzoUnitario;
+  return riga.totaleManuale;
 }
 
 export interface Totali {
@@ -20,7 +20,7 @@ export interface Totali {
 }
 
 export function calcolaTotali(preventivo: Preventivo): Totali {
-  const righeSospese = preventivo.righe.filter((r) => rigaHaContenuto(r) && r.quantita === null).length;
+  const righeSospese = preventivo.righe.filter((r) => rigaHaContenuto(r) && totaleRiga(r) === null).length;
   const imponibileLordo = preventivo.righe.reduce((somma, riga) => somma + (totaleRiga(riga) ?? 0), 0);
   const valoreSconto = imponibileLordo * (preventivo.scontoPercentuale / 100);
   const imponibileNetto = imponibileLordo - valoreSconto;

@@ -35,9 +35,19 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
   return (
     <div className="flex flex-1 flex-col gap-5 p-4 md:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <label className="text-sm text-slate-500">
-            Preventivo N°
+            Intestazione
+            <input
+              value={preventivo.titolo}
+              onChange={(e) => set('titolo', e.target.value)}
+              placeholder="PREVENTIVO"
+              title="Scrivi la dicitura che vuoi far comparire sul documento, es. PREVENTIVO, SALDO, FATTURA…"
+              className="ml-2 w-32 rounded-lg border border-slate-300 px-2 py-1 text-sm font-semibold outline-none focus:border-blue-700"
+            />
+          </label>
+          <label className="text-sm text-slate-500">
+            N°
             <input
               value={preventivo.numero}
               onChange={(e) => set('numero', e.target.value)}

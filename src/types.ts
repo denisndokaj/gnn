@@ -4,6 +4,7 @@ export interface Riga {
   unitaMisura: string;
   quantita: number | null;
   prezzoUnitario: number;
+  totaleManuale: number | null;
 }
 
 export interface Cliente {
@@ -18,6 +19,7 @@ export type StatoPreventivo = 'bozza' | 'inviato' | 'accettato' | 'rifiutato';
 
 export interface Preventivo {
   id: string;
+  titolo: string;
   numero: string;
   data: string;
   validitaGiorni: number;

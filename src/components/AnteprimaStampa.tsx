@@ -11,7 +11,7 @@ interface Props {
 export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
   const totali = calcolaTotali(preventivo);
   const righeValide = preventivo.righe.filter(
-    (r) => r.descrizione.trim() || r.quantita !== null || r.prezzoUnitario,
+    (r) => r.descrizione.trim() || r.quantita !== null || r.prezzoUnitario || r.totaleManuale !== null,
   );
 
   return (
@@ -37,7 +37,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
           </div>
         </div>
         <div className="text-left @sm:text-right">
-          <h1 className="text-xl font-bold tracking-wide text-blue-900">PREVENTIVO</h1>
+          <h1 className="text-xl font-bold tracking-wide text-blue-900">{preventivo.titolo || 'PREVENTIVO'}</h1>
           <p className="text-sm text-slate-600">N° {preventivo.numero}</p>
           <p className="text-sm text-slate-600">Data: {formattaData(preventivo.data)}</p>
           {preventivo.mostraValidita && (
@@ -94,9 +94,15 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
               <td className="whitespace-pre-wrap py-2 pr-2">{riga.descrizione}</td>
               <td className="py-2 pr-2">{riga.unitaMisura}</td>
               <td className="py-2 pr-2 text-right">
-                {riga.quantita === null ? <span className="italic text-amber-600">da rilevare</span> : riga.quantita}
+                {riga.quantita !== null
+                  ? riga.quantita
+                  : totaleRiga(riga) !== null
+                    ? '—'
+                    : <span className="italic text-amber-600">da rilevare</span>}
               </td>
-              <td className="py-2 pr-2 text-right">{formattaValuta(riga.prezzoUnitario)}</td>
+              <td className="py-2 pr-2 text-right">
+                {riga.quantita === null && totaleRiga(riga) !== null ? '—' : formattaValuta(riga.prezzoUnitario)}
+              </td>
               <td className="py-2 text-right font-medium">
                 {totaleRiga(riga) === null ? (
                   <span className="italic text-amber-600">da definire</span>
