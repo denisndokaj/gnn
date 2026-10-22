@@ -31,7 +31,7 @@ export function caricaPreventivi(): Preventivo[] {
     titolo: p.titolo ?? 'PREVENTIVO',
     applicaIva: p.applicaIva ?? true,
     mostraValidita: p.mostraValidita ?? true,
-    mostraVoci: p.mostraVoci ?? true,
+    mostraPrezzi: p.mostraPrezzi ?? true,
     totaleManuale: p.totaleManuale ?? null,
     righe: p.righe.map((r) => ({ ...r, totaleManuale: r.totaleManuale ?? null })),
   }));
@@ -87,7 +87,7 @@ export function nuovoPreventivoVuoto(): Preventivo {
         totaleManuale: null,
       },
     ],
-    mostraVoci: true,
+    mostraPrezzi: true,
     scontoPercentuale: 0,
     ivaPercentuale: 22,
     applicaIva: true,

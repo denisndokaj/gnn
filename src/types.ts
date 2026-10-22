@@ -28,7 +28,7 @@ export interface Preventivo {
   oggetto: string;
   luogoLavori: string;
   righe: Riga[];
-  mostraVoci: boolean;
+  mostraPrezzi: boolean;
   scontoPercentuale: number;
   ivaPercentuale: number;
   applicaIva: boolean;

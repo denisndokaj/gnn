@@ -72,55 +72,63 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
         </div>
       </section>
 
-      {preventivo.mostraVoci && (
-        <table className="w-full border-collapse text-[12.5px]">
-          <thead>
-            <tr className="border-b-2 border-slate-300 text-left text-slate-500">
-              <th className="py-2 pr-2">Descrizione</th>
-              <th className="w-14 py-2 pr-2">U.M.</th>
-              <th className="w-16 py-2 pr-2 text-right">Q.tà</th>
-              <th className="w-24 py-2 pr-2 text-right">Prezzo unit.</th>
-              <th className="w-24 py-2 text-right">Totale</th>
-            </tr>
-          </thead>
-          <tbody>
-            {righeValide.length === 0 && (
-              <tr>
-                <td colSpan={5} className="py-4 text-center text-slate-400">
-                  Nessuna voce inserita
-                </td>
-              </tr>
+      <table className="w-full border-collapse text-[12.5px]">
+        <thead>
+          <tr className="border-b-2 border-slate-300 text-left text-slate-500">
+            <th className="py-2 pr-2">Descrizione</th>
+            <th className="w-14 py-2 pr-2">U.M.</th>
+            <th className="w-16 py-2 pr-2 text-right">Q.tà</th>
+            {preventivo.mostraPrezzi && (
+              <>
+                <th className="w-24 py-2 pr-2 text-right">Prezzo unit.</th>
+                <th className="w-24 py-2 text-right">Totale</th>
+              </>
             )}
-            {righeValide.map((riga) => (
-              <tr key={riga.id} className="border-b border-slate-100 align-top">
-                <td className="whitespace-pre-wrap py-2 pr-2">{riga.descrizione}</td>
-                <td className="py-2 pr-2">{riga.unitaMisura}</td>
-                <td className="py-2 pr-2 text-right">
-                  {riga.quantita !== null
-                    ? riga.quantita
-                    : totaleRiga(riga) !== null
+          </tr>
+        </thead>
+        <tbody>
+          {righeValide.length === 0 && (
+            <tr>
+              <td colSpan={preventivo.mostraPrezzi ? 5 : 3} className="py-4 text-center text-slate-400">
+                Nessuna voce inserita
+              </td>
+            </tr>
+          )}
+          {righeValide.map((riga) => (
+            <tr key={riga.id} className="border-b border-slate-100 align-top">
+              <td className="whitespace-pre-wrap py-2 pr-2">{riga.descrizione}</td>
+              <td className="py-2 pr-2">{riga.unitaMisura}</td>
+              <td className="py-2 pr-2 text-right">
+                {riga.quantita !== null
+                  ? riga.quantita
+                  : totaleRiga(riga) !== null
+                    ? '—'
+                    : <span className="italic text-amber-600">da rilevare</span>}
+              </td>
+              {preventivo.mostraPrezzi && (
+                <>
+                  <td className="py-2 pr-2 text-right">
+                    {riga.quantita === null && totaleRiga(riga) !== null
                       ? '—'
-                      : <span className="italic text-amber-600">da rilevare</span>}
-                </td>
-                <td className="py-2 pr-2 text-right">
-                  {riga.quantita === null && totaleRiga(riga) !== null ? '—' : formattaValuta(riga.prezzoUnitario)}
-                </td>
-                <td className="py-2 text-right font-medium">
-                  {totaleRiga(riga) === null ? (
-                    <span className="italic text-amber-600">da definire</span>
-                  ) : (
-                    formattaValuta(totaleRiga(riga)!)
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                      : formattaValuta(riga.prezzoUnitario)}
+                  </td>
+                  <td className="py-2 text-right font-medium">
+                    {totaleRiga(riga) === null ? (
+                      <span className="italic text-amber-600">da definire</span>
+                    ) : (
+                      formattaValuta(totaleRiga(riga)!)
+                    )}
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       <section className="flex flex-col items-end gap-2">
         <div className="w-full text-sm @sm:w-72">
-          {preventivo.mostraVoci && (
+          {preventivo.mostraPrezzi && (
             <>
               <div className="flex justify-between py-1">
                 <span className="text-slate-500">Imponibile lordo{totali.inSospeso && ' (voci quantificate)'}</span>
@@ -153,7 +161,7 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
             )}
           </div>
         </div>
-        {preventivo.mostraVoci && totaleFinale.inSospeso && (
+        {preventivo.mostraPrezzi && totaleFinale.inSospeso && (
           <p className="w-full text-right text-[11px] italic leading-snug text-amber-700 @sm:w-72">
             Prezzo indicato a unità di misura: il totale sarà definito a seguito del rilievo delle quantità
             effettive.

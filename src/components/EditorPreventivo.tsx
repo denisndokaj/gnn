@@ -184,17 +184,18 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
           <label className="flex items-center gap-1.5 text-xs text-slate-500">
             <input
               type="checkbox"
-              checked={preventivo.mostraVoci}
-              onChange={(e) => set('mostraVoci', e.target.checked)}
+              checked={preventivo.mostraPrezzi}
+              onChange={(e) => set('mostraPrezzi', e.target.checked)}
               className="rounded border-slate-300 text-blue-800 focus:ring-blue-700"
             />
-            Mostra l'elenco delle voci nel documento stampato
+            Mostra i prezzi delle voci nel documento stampato
           </label>
         </div>
-        {!preventivo.mostraVoci && (
+        {!preventivo.mostraPrezzi && (
           <p className="mb-3 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs leading-snug text-slate-500">
-            Le voci restano qui solo per tuo riferimento: nel documento stampato non compariranno, verrà mostrato
-            solo il totale finale.
+            Nel documento stampato comparirà l'elenco delle voci (descrizione, U.M. e quantità) ma senza prezzo
+            unitario né totale di riga: i prezzi restano qui solo per tuo riferimento. Verrà mostrato solo il
+            totale finale.
           </p>
         )}
         <RigheTable righe={preventivo.righe} onChange={(righe) => set('righe', righe)} />
@@ -291,8 +292,8 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
             </div>
           )}
           <p className="text-[11px] text-slate-400">
-            Calcolato dalle voci sopra: se nel documento non vuoi mostrare il dettaglio, usa "Mostra l'elenco
-            delle voci" qui sopra, oppure imposta un totale manuale qui sotto.
+            Calcolato dalle voci sopra: se nel documento non vuoi mostrare i prezzi, usa "Mostra i prezzi delle
+            voci" qui sopra, oppure imposta un totale manuale qui sotto.
           </p>
           <hr className="my-1 border-slate-200" />
           <div className="flex items-center justify-between text-sm text-slate-600">
