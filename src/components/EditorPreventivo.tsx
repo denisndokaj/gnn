@@ -1,6 +1,11 @@
+import type { FocusEvent } from 'react';
 import type { Preventivo, StatoPreventivo } from '../types';
 import { RigheTable } from './RigheTable';
-import { calcolaTotali, formattaValuta } from '../lib/calc';
+import { calcolaTotali, formattaValuta, totaleFinaleEffettivo } from '../lib/calc';
+
+function selezionaTutto(e: FocusEvent<HTMLInputElement>) {
+  e.target.select();
+}
 
 interface Props {
   preventivo: Preventivo;
@@ -23,6 +28,7 @@ function campoClasse() {
 
 export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, onStampa }: Props) {
   const totali = calcolaTotali(preventivo);
+  const totaleFinale = totaleFinaleEffettivo(preventivo, totali);
 
   function set<K extends keyof Preventivo>(campo: K, valore: Preventivo[K]) {
     onChange({ ...preventivo, [campo]: valore });
@@ -173,7 +179,24 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h3 className="mb-3 text-sm font-semibold text-slate-900">Voci di preventivo</h3>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-slate-900">Voci di preventivo</h3>
+          <label className="flex items-center gap-1.5 text-xs text-slate-500">
+            <input
+              type="checkbox"
+              checked={preventivo.mostraVoci}
+              onChange={(e) => set('mostraVoci', e.target.checked)}
+              className="rounded border-slate-300 text-blue-800 focus:ring-blue-700"
+            />
+            Mostra l'elenco delle voci nel documento stampato
+          </label>
+        </div>
+        {!preventivo.mostraVoci && (
+          <p className="mb-3 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs leading-snug text-slate-500">
+            Le voci restano qui solo per tuo riferimento: nel documento stampato non compariranno, verrà mostrato
+            solo il totale finale.
+          </p>
+        )}
         <RigheTable righe={preventivo.righe} onChange={(righe) => set('righe', righe)} />
       </section>
 
@@ -241,7 +264,7 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
             </div>
           </div>
           <hr className="my-1 border-slate-200" />
-          {totali.inSospeso && (
+          {!totaleFinale.manuale && totali.inSospeso && (
             <p className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs leading-snug text-amber-800">
               {totali.righeSospese === 1 ? '1 voce è' : `${totali.righeSospese} voci sono`} senza quantità: il
               totale resta in sospeso finché non viene rilevata la misura.
@@ -267,13 +290,57 @@ export function EditorPreventivo({ preventivo, onChange, onElimina, onDuplica, o
               <span>{formattaValuta(totali.valoreIva)}</span>
             </div>
           )}
+          <p className="text-[11px] text-slate-400">
+            Calcolato dalle voci sopra: se nel documento non vuoi mostrare il dettaglio, usa "Mostra l'elenco
+            delle voci" qui sopra, oppure imposta un totale manuale qui sotto.
+          </p>
+          <hr className="my-1 border-slate-200" />
+          <div className="flex items-center justify-between text-sm text-slate-600">
+            <span>Totale finale</span>
+            <div className="flex overflow-hidden rounded-lg border border-slate-300 text-xs font-medium">
+              <button
+                type="button"
+                onClick={() => set('totaleManuale', null)}
+                className={`px-2.5 py-1 transition ${
+                  !totaleFinale.manuale ? 'bg-blue-800 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                Automatico
+              </button>
+              <button
+                type="button"
+                onClick={() => set('totaleManuale', preventivo.totaleManuale ?? totali.totale)}
+                className={`border-l border-slate-300 px-2.5 py-1 transition ${
+                  totaleFinale.manuale ? 'bg-blue-800 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                Manuale
+              </button>
+            </div>
+          </div>
+          {totaleFinale.manuale && (
+            <label className="flex items-center justify-between text-sm text-slate-600">
+              Importo
+              <input
+                type="number"
+                step="any"
+                value={preventivo.totaleManuale ?? ''}
+                onChange={(e) => set('totaleManuale', e.target.value === '' ? 0 : Number(e.target.value))}
+                onFocus={selezionaTutto}
+                className="w-28 rounded border border-slate-300 px-2 py-1 text-right text-sm outline-none focus:border-blue-700"
+              />
+            </label>
+          )}
           <hr className="my-1 border-slate-200" />
           <div className="flex items-center justify-between text-base font-semibold text-slate-900">
             <span>Totale ({preventivo.applicaIva ? 'IVA inclusa' : 'IVA esclusa'})</span>
-            {totali.inSospeso ? (
+            {totaleFinale.inSospeso ? (
               <span className="text-amber-700">Da definire</span>
             ) : (
-              <span>{formattaValuta(totali.totale)}</span>
+              <span>
+                {formattaValuta(totaleFinale.valore)}
+                {totaleFinale.manuale && <span className="ml-1 text-xs font-normal text-slate-400">(manuale)</span>}
+              </span>
             )}
           </div>
         </div>

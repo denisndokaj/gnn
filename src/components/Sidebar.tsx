@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Preventivo, StatoPreventivo } from '../types';
-import { calcolaTotali, formattaData, formattaValuta } from '../lib/calc';
+import { calcolaTotali, formattaData, formattaValuta, totaleFinaleEffettivo } from '../lib/calc';
 import logo from '../assets/logo.jpg';
 
 const ETICHETTE_STATO: Record<StatoPreventivo, string> = {
@@ -71,7 +71,7 @@ export function Sidebar({ preventivi, idCorrente, onSeleziona, onNuovo }: Props)
         )}
         <ul className="flex flex-col gap-1">
           {elenco.map((p) => {
-            const { totale, inSospeso } = calcolaTotali(p);
+            const { valore: totale, inSospeso } = totaleFinaleEffettivo(p, calcolaTotali(p));
             const attivo = p.id === idCorrente;
             return (
               <li key={p.id}>

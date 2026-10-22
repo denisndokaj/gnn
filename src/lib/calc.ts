@@ -37,6 +37,19 @@ export function calcolaTotali(preventivo: Preventivo): Totali {
   };
 }
 
+export interface TotaleFinale {
+  valore: number;
+  inSospeso: boolean;
+  manuale: boolean;
+}
+
+export function totaleFinaleEffettivo(preventivo: Preventivo, totali: Totali): TotaleFinale {
+  if (preventivo.totaleManuale !== null) {
+    return { valore: preventivo.totaleManuale, inSospeso: false, manuale: true };
+  }
+  return { valore: totali.totale, inSospeso: totali.inSospeso, manuale: false };
+}
+
 export function formattaValuta(valore: number): string {
   return valore.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
 }

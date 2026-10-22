@@ -1,5 +1,5 @@
 import type { DatiAzienda, Preventivo } from '../types';
-import { calcolaTotali, formattaData, formattaValuta, totaleRiga } from '../lib/calc';
+import { calcolaTotali, formattaData, formattaValuta, totaleFinaleEffettivo, totaleRiga } from '../lib/calc';
 import { AZIENDA } from '../lib/azienda';
 import logo from '../assets/logo.jpg';
 
@@ -10,6 +10,7 @@ interface Props {
 
 export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
   const totali = calcolaTotali(preventivo);
+  const totaleFinale = totaleFinaleEffettivo(preventivo, totali);
   const righeValide = preventivo.righe.filter(
     (r) => r.descrizione.trim() || r.quantita !== null || r.prezzoUnitario || r.totaleManuale !== null,
   );
@@ -71,78 +72,88 @@ export function AnteprimaStampa({ preventivo, datiAzienda }: Props) {
         </div>
       </section>
 
-      <table className="w-full border-collapse text-[12.5px]">
-        <thead>
-          <tr className="border-b-2 border-slate-300 text-left text-slate-500">
-            <th className="py-2 pr-2">Descrizione</th>
-            <th className="w-14 py-2 pr-2">U.M.</th>
-            <th className="w-16 py-2 pr-2 text-right">Q.tà</th>
-            <th className="w-24 py-2 pr-2 text-right">Prezzo unit.</th>
-            <th className="w-24 py-2 text-right">Totale</th>
-          </tr>
-        </thead>
-        <tbody>
-          {righeValide.length === 0 && (
-            <tr>
-              <td colSpan={5} className="py-4 text-center text-slate-400">
-                Nessuna voce inserita
-              </td>
+      {preventivo.mostraVoci && (
+        <table className="w-full border-collapse text-[12.5px]">
+          <thead>
+            <tr className="border-b-2 border-slate-300 text-left text-slate-500">
+              <th className="py-2 pr-2">Descrizione</th>
+              <th className="w-14 py-2 pr-2">U.M.</th>
+              <th className="w-16 py-2 pr-2 text-right">Q.tà</th>
+              <th className="w-24 py-2 pr-2 text-right">Prezzo unit.</th>
+              <th className="w-24 py-2 text-right">Totale</th>
             </tr>
-          )}
-          {righeValide.map((riga) => (
-            <tr key={riga.id} className="border-b border-slate-100 align-top">
-              <td className="whitespace-pre-wrap py-2 pr-2">{riga.descrizione}</td>
-              <td className="py-2 pr-2">{riga.unitaMisura}</td>
-              <td className="py-2 pr-2 text-right">
-                {riga.quantita !== null
-                  ? riga.quantita
-                  : totaleRiga(riga) !== null
-                    ? '—'
-                    : <span className="italic text-amber-600">da rilevare</span>}
-              </td>
-              <td className="py-2 pr-2 text-right">
-                {riga.quantita === null && totaleRiga(riga) !== null ? '—' : formattaValuta(riga.prezzoUnitario)}
-              </td>
-              <td className="py-2 text-right font-medium">
-                {totaleRiga(riga) === null ? (
-                  <span className="italic text-amber-600">da definire</span>
-                ) : (
-                  formattaValuta(totaleRiga(riga)!)
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {righeValide.length === 0 && (
+              <tr>
+                <td colSpan={5} className="py-4 text-center text-slate-400">
+                  Nessuna voce inserita
+                </td>
+              </tr>
+            )}
+            {righeValide.map((riga) => (
+              <tr key={riga.id} className="border-b border-slate-100 align-top">
+                <td className="whitespace-pre-wrap py-2 pr-2">{riga.descrizione}</td>
+                <td className="py-2 pr-2">{riga.unitaMisura}</td>
+                <td className="py-2 pr-2 text-right">
+                  {riga.quantita !== null
+                    ? riga.quantita
+                    : totaleRiga(riga) !== null
+                      ? '—'
+                      : <span className="italic text-amber-600">da rilevare</span>}
+                </td>
+                <td className="py-2 pr-2 text-right">
+                  {riga.quantita === null && totaleRiga(riga) !== null ? '—' : formattaValuta(riga.prezzoUnitario)}
+                </td>
+                <td className="py-2 text-right font-medium">
+                  {totaleRiga(riga) === null ? (
+                    <span className="italic text-amber-600">da definire</span>
+                  ) : (
+                    formattaValuta(totaleRiga(riga)!)
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       <section className="flex flex-col items-end gap-2">
         <div className="w-full text-sm @sm:w-72">
-          <div className="flex justify-between py-1">
-            <span className="text-slate-500">Imponibile lordo{totali.inSospeso && ' (voci quantificate)'}</span>
-            <span>{formattaValuta(totali.imponibileLordo)}</span>
-          </div>
-          {preventivo.scontoPercentuale > 0 && (
-            <div className="flex justify-between py-1">
-              <span className="text-slate-500">Sconto ({preventivo.scontoPercentuale}%)</span>
-              <span>− {formattaValuta(totali.valoreSconto)}</span>
-            </div>
-          )}
-          <div className="flex justify-between py-1">
-            <span className="text-slate-500">Imponibile netto</span>
-            <span>{formattaValuta(totali.imponibileNetto)}</span>
-          </div>
-          {preventivo.applicaIva && (
-            <div className="flex justify-between py-1">
-              <span className="text-slate-500">IVA ({preventivo.ivaPercentuale}%)</span>
-              <span>{formattaValuta(totali.valoreIva)}</span>
-            </div>
+          {preventivo.mostraVoci && (
+            <>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Imponibile lordo{totali.inSospeso && ' (voci quantificate)'}</span>
+                <span>{formattaValuta(totali.imponibileLordo)}</span>
+              </div>
+              {preventivo.scontoPercentuale > 0 && (
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500">Sconto ({preventivo.scontoPercentuale}%)</span>
+                  <span>− {formattaValuta(totali.valoreSconto)}</span>
+                </div>
+              )}
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Imponibile netto</span>
+                <span>{formattaValuta(totali.imponibileNetto)}</span>
+              </div>
+              {preventivo.applicaIva && (
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500">IVA ({preventivo.ivaPercentuale}%)</span>
+                  <span>{formattaValuta(totali.valoreIva)}</span>
+                </div>
+              )}
+            </>
           )}
           <div className="mt-1 flex justify-between border-t-2 border-blue-900 py-2 text-base font-bold text-blue-900">
             <span>TOTALE ({preventivo.applicaIva ? 'IVA inclusa' : 'IVA esclusa'})</span>
-            {totali.inSospeso ? <span className="text-amber-700">Da definire</span> : <span>{formattaValuta(totali.totale)}</span>}
+            {totaleFinale.inSospeso ? (
+              <span className="text-amber-700">Da definire</span>
+            ) : (
+              <span>{formattaValuta(totaleFinale.valore)}</span>
+            )}
           </div>
         </div>
-        {totali.inSospeso && (
+        {preventivo.mostraVoci && totaleFinale.inSospeso && (
           <p className="w-full text-right text-[11px] italic leading-snug text-amber-700 @sm:w-72">
             Prezzo indicato a unità di misura: il totale sarà definito a seguito del rilievo delle quantità
             effettive.
